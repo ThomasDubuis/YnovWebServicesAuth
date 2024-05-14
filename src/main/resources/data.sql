@@ -1,0 +1,3 @@
+insert into account (uid, login, password, status, role, created_at, updated_at) values
+    ('91d007b7-0de7-41fc-803a-bf960ae5a165', 'user', '$2a$10$dWAc3JoF723Do/DNqQzApeg7EWzZ/cYeaoTjNthblgqkyukAdKGWK', 'open', 'ROLE_USER', '2024-05-01 19:21:27.298', '2024-05-01 19:21:27.298'),
+    ('e036cb92-4b05-45e1-8d0b-31c4099e07a1', 'admin', '$2a$10$e3Poj77imJEO73hiBeyq3uwEEfpZofzqkIc.PXpfLgEoGETFrx8Xa', 'open', 'ROLE_ADMIN', '2024-05-01 19:21:27.298', '2024-05-01 19:21:27.298');

@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.List;
 @Data
 @AllArgsConstructor
 public class AccountResponse {
@@ -14,7 +13,7 @@ public class AccountResponse {
 
     private String login;
 
-    private List<Role> roles;
+    private Role role;
 
     private Date createdAt;
 

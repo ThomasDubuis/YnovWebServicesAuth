@@ -5,8 +5,6 @@ import com.tdubuis.authapp.entity.Status;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class AccountRequest {
 
@@ -15,7 +13,7 @@ public class AccountRequest {
     @NotBlank(message = "Password can't be empty")
     private String password;
 
-    private List<Role> roles;
+    private Role role;
     @NotBlank(message = "Status can't be empty")
     private Status status;
 }

@@ -11,7 +11,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -28,8 +27,10 @@ public class Account {
 
     private String password;
 
-    private List<Role> roles;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @CreatedDate
@@ -48,8 +49,8 @@ public class Account {
         if (accountRequest.getStatus() != null) {
             this.status = accountRequest.getStatus();
         }
-        if (accountRequest.getRoles() != null &&  !accountRequest.getRoles().isEmpty()) {
-            this.roles = accountRequest.getRoles();
+        if (accountRequest.getRole() != null) {
+            this.role = accountRequest.getRole();
         }
     }
 }

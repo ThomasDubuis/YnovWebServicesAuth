@@ -17,6 +17,9 @@ spring:
     url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/authapp}
     username: ${DATASOURCE_USERNAME:postgres}
     password: ${DATASOURCE_PASSWORD:password}
+  sql:
+    init:
+      mode: always #For generate fakeData with data.sql file
   jpa:
     open-in-view: true
     defer-datasource-initialization: true
@@ -26,5 +29,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        show-sql: ${SHOW_SQL:true}
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: ${SHOW_SQL:true}
+token:
+  refresh-secret-key: IsaGgHG/BVCU7s9BQEhCCHJ2jF0kvsVlondtH5EuQtGhSABhKh0CNyJaH0DogORO
+  refresh-token-expiration: 7200 # in seconds (equal to 120 min)
+  access-secret-key: mbICW8nlcfNEwlmHGF98RPQ1hq3ROy0Hg6krYFRmYk/yjkCsNrPBlVNauPt85oNq
+  access-token-expiration: 3600 # in seconds (equal to 60 min)
