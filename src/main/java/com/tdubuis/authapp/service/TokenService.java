@@ -5,8 +5,10 @@ import com.tdubuis.authapp.dto.response.AccessTokenResponse;
 import com.tdubuis.authapp.dto.response.TokenResponse;
 import com.tdubuis.authapp.entity.Account;
 import com.tdubuis.authapp.exception.ElementNotFoundException;
+import com.tdubuis.authapp.exception.TooManyRequestsException;
 import com.tdubuis.authapp.repository.AccountRepository;
 import com.tdubuis.authapp.utils.token.TokenType;
+import io.github.bucket4j.Bucket;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,19 +25,34 @@ public class TokenService {
     private final AccountRepository accountRepository;
     private final JwtService jwtService;
 
-    public TokenResponse generateToken(AuthenticationRequest authenticationRequest) {
+    public TokenResponse generateToken(AuthenticationRequest authenticationRequest, Bucket shortTimeBucket, Bucket longTimeBucket) {
         Optional<Account> accountOptional = accountRepository.findAccountByLogin(authenticationRequest.getLogin());
 
-        Account account = accountOptional.orElseThrow(() -> new ElementNotFoundException("Identifiants non trouvé (paire login / mot de passe inconnue)"));
+        if (accountOptional.isEmpty()) {
+            preventBrutForce(shortTimeBucket, longTimeBucket);
+            return null;
+        }
+        Account account = accountOptional.get();
 
         if(passwordEncoder.matches(authenticationRequest.getPassword(), account.getPassword())) {
             TokenResponse tokenResponse = new TokenResponse();
             long currentTimeMillis = System.currentTimeMillis();
             jwtService.generateAccessToken(tokenResponse, account.getUid(), currentTimeMillis);
             jwtService.generateRefreshToken(tokenResponse, account.getUid(), currentTimeMillis);
+            shortTimeBucket.reset();
             return tokenResponse;
         }else {
+            preventBrutForce(shortTimeBucket, longTimeBucket);
+            return null;
+        }
+    }
+
+    private void preventBrutForce(Bucket shortTimeBucket, Bucket longTimeBucket) {
+        if (shortTimeBucket.tryConsume(1)) {
             throw new ElementNotFoundException("Identifiants non trouvé (paire login / mot de passe inconnue)");
+        } else {
+            longTimeBucket.tryConsume(1);
+            throw new TooManyRequestsException("Too many failed attempts, please try later");
         }
     }
 

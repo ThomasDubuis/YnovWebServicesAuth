@@ -1,6 +1,8 @@
 package com.tdubuis.authapp.config;
 
 import com.tdubuis.authapp.exception.ElementNotFoundException;
+import com.tdubuis.authapp.exception.ForbiddenException;
+import com.tdubuis.authapp.exception.TooManyRequestsException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.NonNull;
@@ -38,6 +40,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleSignatureException(Exception ex) {
         log.error(ex.getClass().getName() + " : " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token non trouvé / invalide");
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex) {
+        log.error(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<Object> handleTooManyRequestsException(TooManyRequestsException ex) {
+        log.error(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(ex.getMessage());
     }
 
     @Override
